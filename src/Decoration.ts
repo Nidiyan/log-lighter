@@ -2,8 +2,8 @@ import * as vscode from 'vscode';
 
 export class Decoration {
     private decoration: vscode.TextEditorDecorationType;
-    private decorations: vscode.DecorationOptions[];
     private searchRegex: RegExp;
+    private decorations: vscode.DecorationOptions[];
 
     constructor(decorationColor: string, search: RegExp) {
         this.decoration = this.createDecorator(decorationColor);
