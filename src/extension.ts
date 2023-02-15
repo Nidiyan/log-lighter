@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import * as decorator from './decorators';
 
-const vdiDecorator = decorator.vdi;
+let logDecorators: decorator.Decoration[] = [];
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -13,12 +13,6 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "log-lighter" is now active!');
 
-	// Test decorator here
-	vscode.workspace.onDidSaveTextDocument(event => {
-		const openEditor = vscode.window.visibleTextEditors.filter(editor => editor.document.uri)[0];
-		  decorate(openEditor);
-	});
-
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
@@ -26,16 +20,22 @@ export function activate(context: vscode.ExtensionContext) {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from log-lighter!');
+		const openEditor = vscode.window.visibleTextEditors.filter(editor => editor.document.uri)[0];
+
+		const vdiDecoration = new decorator.Decoration('blue', /preload: post/); 
+		const nonVDI = new decorator.Decoration('red', /preload: host/);
+
+		decorate(openEditor, vdiDecoration);
+		decorate(openEditor, nonVDI);
 	});
 
 	context.subscriptions.push(disposable);
 }
 
-function decorate(editor: vscode.TextEditor) {
+function decorate(editor: vscode.TextEditor, decoration: decorator.Decoration) {
 	let logs = editor.document.getText();
-	let regex = /preload: post/;
-
 	const sourceCodeArr = logs.split('\n');
+	const regex = decoration.getRegex;
 
 	let decorationsArray: vscode.DecorationOptions[] = [];
 
@@ -44,8 +44,8 @@ function decorate(editor: vscode.TextEditor) {
 
 		if (match !== null && match.index !== undefined) {
 			let range = new vscode.Range(
-			new vscode.Position(line, 0),
-			new vscode.Position(line, sourceCodeArr[line].length)
+				new vscode.Position(line, 0),
+				new vscode.Position(line, sourceCodeArr[line].length)
 			);
 
 			let decoration = { range };
@@ -55,8 +55,14 @@ function decorate(editor: vscode.TextEditor) {
 
 	}
 
-	editor.setDecorations(vdiDecorator, decorationsArray);
+	decoration.set(decorationsArray);
+	editor.setDecorations(decoration.getDecoration, decoration.getDecorations);
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() {
+	// Clean up all decorators :)
+	logDecorators.forEach(decorator => {
+		decorator.getDecoration.dispose();
+	});
+}
