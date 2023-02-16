@@ -1,21 +1,23 @@
 import * as vscode from 'vscode';
 
 export class LogLighterProvider implements vscode.TreeDataProvider<TreeItem> {
-    onDidChangeTreeData?: vscode.Event<TreeItem | null | undefined> | undefined;
+    private _onDidChangeTreeData: vscode.EventEmitter<TreeItem | undefined | null | void> = 
+        new vscode.EventEmitter<TreeItem | undefined | null | void>();
+    readonly onDidChangeTreeData: vscode.Event<TreeItem | undefined | null | void> = 
+        this._onDidChangeTreeData.event;
   
     data: TreeItem[];
   
     constructor() {
-      this.data = [
-        new TreeItem('Markers', [
-            new TreeItem(
-                '/preload: post/'
-            ),
-            new TreeItem(
-                '/preload: host/'
-            )
-      ])
-    ];
+      this.data = [];
+    }
+
+    refresh(): void {
+        this._onDidChangeTreeData.fire(undefined);
+    }
+
+    addTreeItem(searchString: string, highlightColor: string): void {
+        this.data.push(new TreeItem(searchString));
     }
   
     getTreeItem(element: TreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {

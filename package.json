@@ -10,7 +10,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:log-lighter.helloWorld"
+    "onCommand:log-lighter.helloWorld",
+    "onCommand:log-lighter.addLight"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -20,15 +21,15 @@
         "title": "Hello World"
       },
       {
-        "command": "logLighter.addLight",
+        "command": "log-lighter.addLight",
         "title": "Add Light",
-        "icon": "$(heart)"
+        "icon": "$(add)"
       }
     ],
     "menus": {
       "view/title": [
         {
-          "command": "logLighter.addLight",
+          "command": "log-lighter.addLight",
           "when": "view == log-lighter-view",
           "group": "navigation"
         }
@@ -47,7 +48,7 @@
       "log-lighter": [
         {
           "id": "log-lighter-view",
-          "name": "Search"
+          "name": "Log Lighter"
         }
       ]
     }
