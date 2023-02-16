@@ -16,8 +16,8 @@ export class LogLighterProvider implements vscode.TreeDataProvider<TreeItem> {
         this._onDidChangeTreeData.fire(undefined);
     }
 
-    addTreeItem(searchString: string, highlightColor: string): void {
-        this.data.push(new TreeItem(searchString));
+    addTreeItem(searchString: string, color: string): void {
+        this.data.push(new TreeItem(searchString, color));
     }
   
     getTreeItem(element: TreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {
@@ -33,13 +33,19 @@ export class LogLighterProvider implements vscode.TreeDataProvider<TreeItem> {
   }
   
   class TreeItem extends vscode.TreeItem {
+    searchString: RegExp;
+    color: string | undefined;
     children: TreeItem[] | undefined;
   
-    constructor(label: string, children?: TreeItem[]) {
+    constructor(label: string, color: string | undefined) {
       super(
           label,
-          children === undefined ? vscode.TreeItemCollapsibleState.None :
-                                   vscode.TreeItemCollapsibleState.Expanded);
-      this.children = children;
+          color === undefined ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Expanded
+        );
+        if (color && typeof color !== 'undefined') {
+            this.children = [new TreeItem(color, undefined)];
+        }
+      this.searchString = new RegExp(label);
+      this.color = color;
     }
   }
