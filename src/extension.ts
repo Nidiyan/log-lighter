@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import { Decoration } from './Decoration';
 import { LogLighterPanel } from './LogLighterPanel';
+import { LogLighterProvider } from './LogLighterTree';
 
 let logDecorators: Decoration[] = [];
 
@@ -10,13 +11,16 @@ let logDecorators: Decoration[] = [];
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
 
+	// Activate TreeDataProvider
+	vscode.window.registerTreeDataProvider('log-lighter-view', new LogLighterProvider());
+
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "log-lighter" is now active!');
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
+	// The commandId parameter must match the command field in package.json5
 	let loglighter = vscode.commands.registerCommand('log-lighter.helloWorld', () => {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
@@ -61,8 +65,8 @@ function decorate(editor: vscode.TextEditor, decoration: Decoration) {
 		}
 	}
 
-	let test = editor.selection;
-	let test2 = editor.selections;
+	// let test = editor.selection;
+	// let test2 = editor.selections;
 
 	decoration.set(decorationsArray);
 	editor.setDecorations(decoration.getDecoration, decoration.getDecorations);

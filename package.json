@@ -14,6 +14,26 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "commands": [
+      {
+        "command": "log-lighter.helloWorld",
+        "title": "Hello World"
+      },
+      {
+        "command": "logLighter.addLight",
+        "title": "Add Light",
+        "icon": "$(heart)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "logLighter.addLight",
+          "when": "view == log-lighter-view",
+          "group": "navigation"
+        }
+      ]
+    },
     "viewsContainers": {
       "activitybar": [
         {
@@ -26,18 +46,11 @@
     "views": {
       "log-lighter": [
         {
-          "id": "create-search",
-          "name": "Search",
-          "type": "tree"
+          "id": "log-lighter-view",
+          "name": "Search"
         }
       ]
-    },
-    "commands": [
-      {
-        "command": "log-lighter.helloWorld",
-        "title": "Hello World"
-      }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
