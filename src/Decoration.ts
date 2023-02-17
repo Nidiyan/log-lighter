@@ -32,9 +32,10 @@ export class Decoration {
 
     private createDecorator(color: string) {
         return vscode.window.createTextEditorDecorationType({
+            isWholeLine: true,
             backgroundColor: color,
             overviewRulerColor: color,
-            overviewRulerLane: vscode.OverviewRulerLane.Right
+            overviewRulerLane: vscode.OverviewRulerLane.Left
         });
     }
 }

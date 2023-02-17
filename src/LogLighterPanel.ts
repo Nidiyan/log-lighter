@@ -1,5 +1,24 @@
 import * as vscode from "vscode";
 
+// package.json
+// "viewsContainers": {
+//   "activitybar": [
+//     {
+//       "id": "log-lighter",
+//       "title": "Log Lighter",
+//       "icon": "$(lightbulb)"
+//     }
+//   ]
+// },
+// "views": {
+//   "log-lighter": [
+//     {
+//       "id": "create-search",
+//       "name": "Search"
+//     }
+//   ]
+// },
+
 export class LogLighterPanel {
   public static currentPanel: LogLighterPanel | undefined;
   private readonly _panel: vscode.WebviewPanel;
@@ -18,7 +37,6 @@ export class LogLighterPanel {
       const panel = vscode.window.createWebviewPanel("hello-world", "Hello World", vscode.ViewColumn.One, {
         // Empty for now
       });
-
       LogLighterPanel.currentPanel = new LogLighterPanel(panel);
     }
   }

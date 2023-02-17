@@ -2,33 +2,43 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { Decoration } from './Decoration';
-import { LogLighterPanel } from './LogLighterPanel';
+import { LogLighterTree } from './LogLighterTree';
 
 let logDecorators: Decoration[] = [];
+let logLighterTree: LogLighterTree;
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "log-lighter" is now active!');
+
+	// Activate TreeDataProvider
+	// This may need to emit/events and then have another component listening
+	// log-lighter-view:emit('newSearch')
+	// log-lighter-view:listen('newSearch') -> add search object & run search again
+	logLighterTree = new LogLighterTree();
+	vscode.window.registerTreeDataProvider('log-lighter-view', logLighterTree);
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
+	// The commandId parameter must match the command field in package.json5
+	let addLight = vscode.commands.registerCommand('log-lighter.addLight', () => {
+		vscode.window.showInformationMessage('log-lighter addLight');
+		logLighterTree.addTreeItem('testing', 'blue');
+		logLighterTree.refresh();
+	});
+
 	let loglighter = vscode.commands.registerCommand('log-lighter.helloWorld', () => {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from log-lighter!');
-		LogLighterPanel.render();
 
 		const openEditor = vscode.window.visibleTextEditors.filter(editor => editor.document.uri)[0];
 
 		const vdiDecoration = new Decoration('blue', /preload: post/); 
 		const nonVDI = new Decoration('red', /preload: host/);
 
-		logDecorators.push(vdiDecoration);
+		logDecorators.push(vdiDecoration);	
 		logDecorators.push(nonVDI);
 
 		decorate(openEditor, vdiDecoration);
@@ -62,8 +72,8 @@ function decorate(editor: vscode.TextEditor, decoration: Decoration) {
 		}
 	}
 
-	let test = editor.selection;
-	let test2 = editor.selections;
+	// let test = editor.selection;
+	// let test2 = editor.selections;
 
 	decoration.set(decorationsArray);
 	editor.setDecorations(decoration.getDecoration, decoration.getDecorations);
