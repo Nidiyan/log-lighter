@@ -24,6 +24,10 @@
         "command": "log-lighter.addLight",
         "title": "Add Light",
         "icon": "$(add)"
+      },
+      {
+        "command": "tree-item.onItemClicked",
+        "title": "log lighter tree item clicked"
       }
     ],
     "menus": {

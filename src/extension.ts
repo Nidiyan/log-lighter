@@ -2,10 +2,10 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { Decoration } from './Decoration';
-import { LogLighterProvider } from './LogLighterTree';
+import { LogLighterTree } from './LogLighterTree';
 
 let logDecorators: Decoration[] = [];
-let logLighterProvider: LogLighterProvider;
+let logLighterTree: LogLighterTree;
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -16,16 +16,16 @@ export function activate(context: vscode.ExtensionContext) {
 	// This may need to emit/events and then have another component listening
 	// log-lighter-view:emit('newSearch')
 	// log-lighter-view:listen('newSearch') -> add search object & run search again
-	logLighterProvider = new LogLighterProvider();
-	vscode.window.registerTreeDataProvider('log-lighter-view', logLighterProvider);
+	logLighterTree = new LogLighterTree();
+	vscode.window.registerTreeDataProvider('log-lighter-view', logLighterTree);
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json5
 	let addLight = vscode.commands.registerCommand('log-lighter.addLight', () => {
 		vscode.window.showInformationMessage('log-lighter addLight');
-		logLighterProvider.addTreeItem('testing', 'blue');
-		logLighterProvider.refresh();
+		logLighterTree.addTreeItem('testing', 'blue');
+		logLighterTree.refresh();
 	});
 
 	let loglighter = vscode.commands.registerCommand('log-lighter.helloWorld', () => {
@@ -38,7 +38,7 @@ export function activate(context: vscode.ExtensionContext) {
 		const vdiDecoration = new Decoration('blue', /preload: post/); 
 		const nonVDI = new Decoration('red', /preload: host/);
 
-		logDecorators.push(vdiDecoration);
+		logDecorators.push(vdiDecoration);	
 		logDecorators.push(nonVDI);
 
 		decorate(openEditor, vdiDecoration);

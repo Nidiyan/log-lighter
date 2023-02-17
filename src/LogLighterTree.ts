@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-export class LogLighterProvider implements vscode.TreeDataProvider<TreeItem> {
+export class LogLighterTree implements vscode.TreeDataProvider<TreeItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<TreeItem | undefined | null | void> = 
         new vscode.EventEmitter<TreeItem | undefined | null | void>();
     readonly onDidChangeTreeData: vscode.Event<TreeItem | undefined | null | void> = 
@@ -9,6 +9,7 @@ export class LogLighterProvider implements vscode.TreeDataProvider<TreeItem> {
     data: TreeItem[];
   
     constructor() {
+      vscode.commands.registerCommand('tree-item.onItemClicked', item => this.onItemClicked(item));
       this.data = [];
     }
 
@@ -30,6 +31,10 @@ export class LogLighterProvider implements vscode.TreeDataProvider<TreeItem> {
       }
       return element.children;
     }
+
+    onItemClicked(item: TreeItem) {
+      vscode.window.showInformationMessage(`item clicked ${item.color} ${item.searchString}`);
+    }
   }
   
   class TreeItem extends vscode.TreeItem {
@@ -39,13 +44,17 @@ export class LogLighterProvider implements vscode.TreeDataProvider<TreeItem> {
   
     constructor(label: string, color: string | undefined) {
       super(
-          label,
-          color === undefined ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Expanded
+          label + " : " + color,
+          vscode.TreeItemCollapsibleState.None
         );
-        if (color && typeof color !== 'undefined') {
-            this.children = [new TreeItem(color, undefined)];
-        }
+
+      this.color = color;
       this.searchString = new RegExp(label);
       this.color = color;
+      this.command = { 
+        command: 'tree-item.onItemClicked',
+        title: "Item Clicked",
+        arguments: [this]
+      };
     }
   }
