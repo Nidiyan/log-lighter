@@ -37,6 +37,7 @@ export class LogLighterTree implements vscode.TreeDataProvider<TreeItem> {
     }
   }
   
+  // Instead of these individual methods should create/hold Decoration object?
   class TreeItem extends vscode.TreeItem {
     searchString: RegExp;
     color: string | undefined;

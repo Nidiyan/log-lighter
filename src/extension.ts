@@ -21,31 +21,28 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json5
-	let addLight = vscode.commands.registerCommand('log-lighter.addLight', () => {
+	// The commandId parameter must match the command field in package.json
+	let addLight = vscode.commands.registerCommand('log-lighter.addLight', async () => {
 		vscode.window.showInformationMessage('log-lighter addLight');
-		logLighterTree.addTreeItem('testing', 'blue');
+		const userInput = await vscode.window.showInputBox({ title: "Search String/Color" });
+		const searchColorString = userInput ? userInput.split("/") : undefined;
+
+		if (!searchColorString){ 
+			return;
+		}
+
+		logLighterTree.addTreeItem(searchColorString[0], searchColorString[1]);
 		logLighterTree.refresh();
+		startDecorations(new RegExp(searchColorString[0]), searchColorString[1]);
 	});
+}
 
-	let loglighter = vscode.commands.registerCommand('log-lighter.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from log-lighter!');
+function startDecorations(string: RegExp, color: string) {
+	const openEditor = vscode.window.visibleTextEditors.filter(editor => editor.document.uri)[0];
+	const decor = new Decoration(color, string);
 
-		const openEditor = vscode.window.visibleTextEditors.filter(editor => editor.document.uri)[0];
-
-		const vdiDecoration = new Decoration('blue', /preload: post/); 
-		const nonVDI = new Decoration('red', /preload: host/);
-
-		logDecorators.push(vdiDecoration);	
-		logDecorators.push(nonVDI);
-
-		decorate(openEditor, vdiDecoration);
-		decorate(openEditor, nonVDI);
-	});
-
-	context.subscriptions.push(loglighter);
+	logDecorators.push(decor);
+	decorate(openEditor, decor);
 }
 
 // Find log line and apply the decoration
