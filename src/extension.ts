@@ -86,15 +86,17 @@ async function getTextInput(): Promise<string | undefined> {
 	return input;
 }
 
+// If the input is valid returns the split string
+// All other paths throw an error
 function isInputValid(input: string | undefined): string[] {
 	if (!input) {
 		throw Error('Input is not valid; please enter a valid string');
 	}
 
-	const splitInput = input?.split('//');
-	
+	const splitInput = input.split('//');
+
 	if (splitInput.length < 2) {
-		throw Error ('Input is not valid; please enter a valid string');
+		throw Error('Input invalid');
 	}
 
 	return splitInput;
