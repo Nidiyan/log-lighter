@@ -30,10 +30,14 @@ export function activate(context: vscode.ExtensionContext) {
 						console.log(error);
 					});
 
-		// const logLight = new Decoration(getColor(input), RegExp(getLogLine(input)));
-		// decorate(getCurrentEditor(), logLight);
+		if (!input) {
+			return;
+		}
 
-		// logLighterTree.addTreeItem(logLine, color);
+		const logLight = new Decoration(input[1], RegExp(input[0]));
+		decorate(getCurrentEditor(), logLight);
+
+		logLighterTree.addTreeItem(input[0], input[1]);
 		logLighterTree.refresh();
 	});
 
@@ -74,26 +78,26 @@ function decorate(editor: vscode.TextEditor, decoration: Decoration) {
 }
 
 async function getTextInput(): Promise<string | undefined> {
-	const logAndColor = await vscode.window.showInputBox({
+	const input = await vscode.window.showInputBox({
 		placeHolder: "Search query",
 		prompt: "LogLine//Color (Case matters)",
 	  });
 
-	return logAndColor;
+	return input;
 }
 
-function isInputValid(input: string | undefined): boolean {
+function isInputValid(input: string | undefined): string[] {
 	if (!input) {
-		throw Error('Input is not valid');
+		throw Error('Input is not valid; please enter a valid string');
 	}
 
 	const splitInput = input?.split('//');
 	
 	if (splitInput.length < 2) {
-		throw Error ('Input is not valid');
+		throw Error ('Input is not valid; please enter a valid string');
 	}
 
-	return true;
+	return splitInput;
 }
 
 function getCurrentEditor(): vscode.TextEditor {
