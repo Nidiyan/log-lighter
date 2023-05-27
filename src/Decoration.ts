@@ -10,25 +10,6 @@ export class Decoration {
         this.searchRegex = search;
         this.decorations = [];
     }
-    
-    
-    public set (decorations : vscode.DecorationOptions[]) {
-        this.decorations = decorations;
-    }
-
-    
-    public get getDecorations() : vscode.DecorationOptions[] {
-        return this.decorations;
-    }
-    
-
-    public get getDecoration() : vscode.TextEditorDecorationType {
-        return this.decoration;
-    }
-
-    public get getRegex() : RegExp {
-        return this.searchRegex;
-    }
 
     private createDecorator(color: string) {
         return vscode.window.createTextEditorDecorationType({
@@ -37,5 +18,21 @@ export class Decoration {
             overviewRulerColor: color,
             overviewRulerLane: vscode.OverviewRulerLane.Left
         });
+    }
+        
+    public set (decorations : vscode.DecorationOptions[]) {
+        this.decorations = decorations;
+    }
+
+    public get getDecorations() : vscode.DecorationOptions[] {
+        return this.decorations;
+    }
+
+    public get getDecoration() : vscode.TextEditorDecorationType {
+        return this.decoration;
+    }
+
+    public get getRegex() : RegExp {
+        return this.searchRegex;
     }
 }

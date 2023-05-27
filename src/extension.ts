@@ -6,6 +6,7 @@ import { LogLighterTree } from './LogLighterTree';
 
 let logDecorators: Decoration[] = [];
 let logLighterTree: LogLighterTree;
+let regToDecoratorsMap = {};
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -19,30 +20,26 @@ export function activate(context: vscode.ExtensionContext) {
 	logLighterTree = new LogLighterTree();
 	vscode.window.registerTreeDataProvider('log-lighter-view', logLighterTree);
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json5
-	let addLight = vscode.commands.registerCommand('log-lighter.addLight', () => {
+	let addLight = vscode.commands.registerCommand('log-lighter.addLight', async () => {
 		vscode.window.showInformationMessage('log-lighter addLight');
-		logLighterTree.addTreeItem('testing', 'blue');
+
+		const input = await getTextInput()
+					.then((result) => isInputValid(result))
+					.catch((error) => { 
+						vscode.window.showInformationMessage(error);
+						console.log(error);
+					});
+
+		// const logLight = new Decoration(getColor(input), RegExp(getLogLine(input)));
+		// decorate(getCurrentEditor(), logLight);
+
+		// logLighterTree.addTreeItem(logLine, color);
 		logLighterTree.refresh();
 	});
 
 	let loglighter = vscode.commands.registerCommand('log-lighter.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from log-lighter!');
-
-		const openEditor = vscode.window.visibleTextEditors.filter(editor => editor.document.uri)[0];
-
-		const vdiDecoration = new Decoration('blue', /preload: post/); 
-		const nonVDI = new Decoration('red', /preload: host/);
-
-		logDecorators.push(vdiDecoration);	
-		logDecorators.push(nonVDI);
-
-		decorate(openEditor, vdiDecoration);
-		decorate(openEditor, nonVDI);
 	});
 
 	context.subscriptions.push(loglighter);
@@ -72,11 +69,35 @@ function decorate(editor: vscode.TextEditor, decoration: Decoration) {
 		}
 	}
 
-	// let test = editor.selection;
-	// let test2 = editor.selections;
-
 	decoration.set(decorationsArray);
 	editor.setDecorations(decoration.getDecoration, decoration.getDecorations);
+}
+
+async function getTextInput(): Promise<string | undefined> {
+	const logAndColor = await vscode.window.showInputBox({
+		placeHolder: "Search query",
+		prompt: "LogLine//Color (Case matters)",
+	  });
+
+	return logAndColor;
+}
+
+function isInputValid(input: string | undefined): boolean {
+	if (!input) {
+		throw Error('Input is not valid');
+	}
+
+	const splitInput = input?.split('//');
+	
+	if (splitInput.length < 2) {
+		throw Error ('Input is not valid');
+	}
+
+	return true;
+}
+
+function getCurrentEditor(): vscode.TextEditor {
+	return vscode.window.visibleTextEditors.filter(editor => editor.document.uri)[0];
 }
 
 // This method is called when your extension is deactivated
